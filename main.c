@@ -19,99 +19,74 @@
 #include "LCD_interface.h"
 #include "SERVOMOTOR_Interface.h"
 
+#define PASS 1234
+
 
 int main (){
-	u8 local_u8PasswordSave = 0 , local_u8DefaultPassword = 1234 , local_u8AddedPassword = 1234;
-	u8 Local_u8HKPReturn = HKP_KEY_NOT_PRESSED;
+    u16 local_u16PasswordSave = 0;
+    u8  Local_u8HKPReturn = HKP_KEY_NOT_PRESSED , flag1=0 ;
+
 	HKP_voidInit();
 	LCD_voidInit();
 	TIMER1_voidFPWM();
 
 	while(1){
+
 		LCD_voidSendCommand(LCD_CLEAR);
 		_delay_ms(2);
-		LCD_voidSetLocation(LCD_LINE1,0);
-		LCD_voidSendString("1 Enter Password");
-		LCD_voidSetLocation(LCD_LINE2,0);
-		LCD_voidSendString("2 Add Password");
-		Local_u8HKPReturn = HKP_u8GetKeyValue();
+		LCD_voidSetLocation(LCD_U8_LINE1,0);
+		LCD_voidSendString("Enter Anything");
+		LCD_voidSetLocation(LCD_U8_LINE2,0);
+		LCD_voidSendString("to Enter Pass");
+
+		while (Local_u8HKPReturn == HKP_KEY_NOT_PRESSED){
+			Local_u8HKPReturn = HKP_u8GetKeyValue();
+		}
 
 		if (Local_u8HKPReturn !=HKP_KEY_NOT_PRESSED){
-
-			switch	(Local_u8HKPReturn){
-				case 1 : // To Open The Door
-					LCD_voidSendCommand(LCD_CLEAR);
-					_delay_ms(2);
-					LCD_voidSetLocation(LCD_LINE1,0);
-					LCD_voidSendString("Press = to Enter");
-					if (Local_u8HKPReturn == '#'){
-						if (local_u8PasswordSave ==  local_u8DefaultPassword || local_u8AddedPassword ){
-							LCD_voidSendCommand(LCD_CLEAR);
-							_delay_ms(2);
-							LCD_voidSetLocation(LCD_LINE1,0);
-							LCD_voidSendString("Door Open");
-							SERVO_voidSetAngle(180);
-							local_u8PasswordSave = 0 ;
-						}
-						else{
-							LCD_voidSendCommand(LCD_CLEAR);
-							_delay_ms(2);
-							LCD_voidSetLocation(LCD_LINE1,0);
-							LCD_voidSendString("Wrong Password");
-							LCD_voidSetLocation(LCD_LINE2,0);
-							LCD_voidSendString("Try Again!");
-							local_u8PasswordSave = 0 ;
-						}
-					}
-					else{
-						local_u8PasswordSave = (local_u8PasswordSave*10)+Local_u8HKPReturn;
-					}
-					break;
-				case 2 : // To Reset Password
-					LCD_voidSendCommand(LCD_CLEAR);
-					_delay_ms(2);
-					LCD_voidSetLocation(LCD_LINE1,0);
-					LCD_voidSendString("Enter Default");
-					LCD_voidSetLocation(LCD_LINE2,0);
-					LCD_voidSendString("Press = to Enter");
-					if (Local_u8HKPReturn == '#'){
-						if (local_u8PasswordSave ==  local_u8DefaultPassword ){
-							LCD_voidSendCommand(LCD_CLEAR);
-							_delay_ms(2);
-							LCD_voidSetLocation(LCD_LINE1,0);
-							LCD_voidSendString("Enter New Pass");
-							LCD_voidSetLocation(LCD_LINE2,0);
-							LCD_voidSendString("Press = to Enter");
-							if (Local_u8HKPReturn == '#'){
-								local_u8AddedPassword = local_u8PasswordSave;
-							}
-							else{
-								local_u8PasswordSave = (local_u8PasswordSave*10)+Local_u8HKPReturn;
-							}
-						}
-						else{
-							LCD_voidSendCommand(LCD_CLEAR);
-							_delay_ms(2);
-							LCD_voidSetLocation(LCD_LINE1,0);
-							LCD_voidSendString("Wrong Password");
-							LCD_voidSetLocation(LCD_LINE2,0);
-							LCD_voidSendString("Try Again!");
-							local_u8PasswordSave = 0 ;
-						}
-					}
-					else{
-						local_u8PasswordSave = (local_u8PasswordSave*10)+Local_u8HKPReturn;
-					}
-					break;
-				LCD_voidSendCommand(LCD_CLEAR);
-				_delay_ms(2);
-				LCD_voidSetLocation(LCD_LINE1,0);
-				LCD_voidSendString("1 Enter Password");
-				LCD_voidSetLocation(LCD_LINE2,0);
-				LCD_voidSendString("2 Add Password");
+			flag1=1;
+			LCD_voidSendCommand(LCD_CLEAR);
+			_delay_ms(2);
+			LCD_voidSendString("Press = to Enter");
+			while (flag1){
 				Local_u8HKPReturn = HKP_u8GetKeyValue();
+				if (Local_u8HKPReturn !=HKP_KEY_NOT_PRESSED){
+
+					if (Local_u8HKPReturn == '#'){
+						if (local_u16PasswordSave ==  PASS){
+							LCD_voidSendCommand(LCD_CLEAR);
+							_delay_ms(2);
+							LCD_voidSetLocation(LCD_U8_LINE1,0);
+							LCD_voidSendString("Door Opened");
+							SERVO_voidSetAngle(90);
+							local_u16PasswordSave = 0 ;
+							_delay_ms(500);
+							flag1= 0;
+						}
+
+						else{
+							LCD_voidSendCommand(LCD_CLEAR);
+							_delay_ms(2);
+							LCD_voidSetLocation(LCD_U8_LINE1,0);
+							LCD_voidSendString("Wrong Password");
+							LCD_voidSetLocation(LCD_U8_LINE2,0);
+							LCD_voidSendNumber(local_u16PasswordSave);
+//							LCD_voidSendString("Try Again!");
+							local_u16PasswordSave = 0 ;
+						}
+
+					}
+
+					else{
+
+						local_u16PasswordSave = (local_u16PasswordSave*10)+Local_u8HKPReturn;
+					}
+
+				}
 			}
+			Local_u8HKPReturn =HKP_KEY_NOT_PRESSED ;
 		}
+
 	}
 	return 0;
 }
