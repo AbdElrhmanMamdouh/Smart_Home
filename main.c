@@ -70,8 +70,8 @@ int main (){
 							LCD_voidSetLocation(LCD_U8_LINE1,0);
 							LCD_voidSendString("Wrong Password");
 							LCD_voidSetLocation(LCD_U8_LINE2,0);
-							LCD_voidSendNumber(local_u16PasswordSave);
-//							LCD_voidSendString("Try Again!");
+							// LCD_voidSendNumber(local_u16PasswordSave);
+							LCD_voidSendString("Try Again!");
 							local_u16PasswordSave = 0 ;
 						}
 
