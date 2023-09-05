@@ -60,8 +60,8 @@ int main (){
 							LCD_voidSendString("Door Opened");
 							SERVO_voidSetAngle(90);
 							local_u16PasswordSave = 0 ;
-							_delay_ms(500);
-							flag1= 0;
+							LCD_voidSetLocation(LCD_U8_LINE2,0);
+							LCD_voidSendString("Press * to exit");
 						}
 
 						else{
@@ -76,7 +76,11 @@ int main (){
 						}
 
 					}
+					else if (Local_u8HKPReturn == '*'){
+						flag1=0;
+						SERVO_voidSetAngle(0);
 
+					}
 					else{
 
 						local_u16PasswordSave = (local_u16PasswordSave*10)+Local_u8HKPReturn;
