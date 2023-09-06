@@ -1,6 +1,9 @@
 #include "APP_Interface.h"
 
-extern u8 G_u8LCDCursor, G_u8HKPReturn, G_u8Positioner, G_u8MotorState, G_u8Counter;
+extern u8 G_u8LCDCursor, G_u8HKPReturn, G_u8Positioner;
+extern G_u8MotorState, G_u8Counter, G_u8Check;
+extern G_u8Temperature, G_u16Intensity, G_u8Target;
+
 extern u16 G_u16PasswordSave;
 
 
@@ -12,7 +15,21 @@ void APP_voidAppInit()
 	DIO_voidSetPinValue(DIO_PORTA, DIO_PIN0, DIO_HIGH);
 	DIO_voidSetPinValue(DIO_PORTA, DIO_PIN1, DIO_HIGH);
 
+	DIO_voidSetPinDirection(DIO_PORTA, LED_1, DIO_OUTPUT);
+	DIO_voidSetPinDirection(DIO_PORTA, LED_2, DIO_OUTPUT);
+	DIO_voidSetPinDirection(DIO_PORTA, LED_3, DIO_OUTPUT);
+
+	DIO_voidSetPinDirection(DIO_PORTD, FAN_PIN, DIO_OUTPUT);
+
 	TIMER1_voidFPWM();
+
+	ADC_voidInit();
+
+    //ADC_voidADCSetCallBack(control);
+
+	ADC_voidADCInt();
+
+	//EXTI_voidGIE();
 
 	HKP_voidInit();
 	LCD_voidInit();
@@ -24,6 +41,13 @@ void APP_voidAppLocked()
 {
 	DCMOTOR_voidStop();
 	SERVO_voidSetAngle(0);
+
+	DIO_voidSetPinValue(DIO_PORTD, FAN_PIN, DIO_LOW);
+
+	DIO_voidSetPinValue(DIO_PORTA, LED_1, DIO_LOW);
+	DIO_voidSetPinValue(DIO_PORTA, LED_2, DIO_LOW);
+	DIO_voidSetPinValue(DIO_PORTA, LED_3, DIO_LOW);
+
 	G_u16PasswordSave = 0 ;
 	G_u8LCDCursor = 0;
 	G_u8Positioner =  LOCKED;
@@ -100,3 +124,45 @@ void APP_ControlMotor(void)
 		}
 	}
 }
+
+
+
+void APP_ReadSensors(void)
+{
+	if (G_u8Positioner == UNLOCKED)
+	{
+		G_u8Temperature = LM35_TempSensor_u8ReadTemp();
+
+		G_u16Intensity	= LDR_readint();
+	}
+}
+
+void APP_Control(void)
+{
+	if (G_u8Positioner == UNLOCKED)
+	{
+		if (G_u8Temperature > 30)
+		{
+			DIO_voidSetPinValue(DIO_PORTD, FAN_PIN, DIO_HIGH);
+		}
+		else
+		{
+			DIO_voidSetPinValue(DIO_PORTD, FAN_PIN, DIO_LOW);
+		}
+
+		if (G_u16Intensity > 600)
+		{
+			DIO_voidSetPinValue(DIO_PORTA, LED_1, DIO_HIGH);
+			DIO_voidSetPinValue(DIO_PORTA, LED_2, DIO_HIGH);
+			DIO_voidSetPinValue(DIO_PORTA, LED_3, DIO_HIGH);
+
+		}
+		else
+		{
+			DIO_voidSetPinValue(DIO_PORTA, LED_1, DIO_LOW);
+			DIO_voidSetPinValue(DIO_PORTA, LED_2, DIO_LOW);
+			DIO_voidSetPinValue(DIO_PORTA, LED_3, DIO_LOW);
+		}
+	}
+}
+

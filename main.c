@@ -21,8 +21,11 @@
 
 #include "APP/APP_Interface.h"
 
-u8 G_u8LCDCursor, G_u8HKPReturn, G_u8Positioner, G_u8Counter, G_u8MotorState;
-u16 G_u16PasswordSave;
+u8 G_u8LCDCursor, G_u8HKPReturn, G_u8Positioner, G_u8Counter;
+u8 G_u8MotorState, G_u8Temperature;
+u8 G_u8Target, G_u8Check;
+u16 G_u16PasswordSave,  G_u16Intensity;
+
 
 
 int main ()
@@ -34,19 +37,6 @@ int main ()
 
     while(1)
     {
-//			SERVO_voidSetAngle(0);
-//			G_u8Positioner =  LOCKED;
-//    		LCD_voidSendCommand(LCD_CLEAR);
-//    		_delay_ms(2);
-//    		LCD_voidSetLocation(LCD_U8_LINE1,0);
-//    		LCD_voidSendString("Enter Anything");
-//    		LCD_voidSetLocation(LCD_U8_LINE2,0);
-//    		LCD_voidSendString("to Enter Pass");
-//
-//    		while (G_u8HKPReturn == HKP_KEY_NOT_PRESSED)
-//    		{
-//    			G_u8HKPReturn = HKP_u8GetKeyValue();
-//    		}
     		APP_voidAppLocked();
 
     		if (G_u8HKPReturn !=HKP_KEY_NOT_PRESSED)
@@ -57,33 +47,11 @@ int main ()
     			LCD_voidSendString("Press = to Enter");
     			while (G_u8Positioner != LOCKED)
     			{
-//    				if (G_u8Positioner == UNLOCKED)
-//    				{
-//    					if ( (!DIO_u8GetPinValue(DIO_PORTA,DIO_PIN0)) && (!DIO_u8GetPinValue(DIO_PORTA,DIO_PIN1)) )
-//    					{
-//    						G_u8MotorState = MOTOR_ERROR;
-//    						DCMOTOR_voidStop();
-//    					}
-//
-//    					else if (DIO_u8GetPinValue(DIO_PORTA,DIO_PIN0) && (!DIO_u8GetPinValue(DIO_PORTA,DIO_PIN1)) )
-//    					{
-//							G_u8MotorState = MOTOR_CW;
-//    						DCMOTOR_voidRotateCW();
-//    					}
-//
-//    					else if (DIO_u8GetPinValue(DIO_PORTA,DIO_PIN1) && (!DIO_u8GetPinValue(DIO_PORTA,DIO_PIN0)) )
-//						{
-//							G_u8MotorState = MOTOR_CCW;
-//							DCMOTOR_voidRotateCCW();
-//						}
-//
-//    					else if ( (DIO_u8GetPinValue(DIO_PORTA,DIO_PIN0)) && (DIO_u8GetPinValue(DIO_PORTA,DIO_PIN1)) )
-//						{
-//							G_u8MotorState = MOTOR_STOP;
-//							DCMOTOR_voidStop();
-//						}
-//    				}
     				APP_ControlMotor();
+
+    				APP_ReadSensors();
+
+    				APP_Control();
 
     				G_u8HKPReturn = HKP_u8GetKeyValue();
 
@@ -93,23 +61,6 @@ int main ()
     					{
     						if (G_u16PasswordSave ==  PASS) /*The Password Is Enterred Correctly*/
     						{
-//    							LCD_voidSendCommand(LCD_CLEAR);
-//    							_delay_ms(2);
-//    							LCD_voidSetLocation(LCD_U8_LINE1,0);
-//    							LCD_voidSendString("Door Opened");
-//
-//    							SERVO_voidSetAngle(90);
-//    							G_u16PasswordSave = 0 ;
-//    							G_u8LCDCursor = 0;
-//    							G_u8Counter = 0;
-//    							G_u8Positioner = UNLOCKED;
-//
-//    							LCD_voidSetLocation(LCD_U8_LINE2,0);
-//    							LCD_voidSendString("Press * to exit");
-//    							LCD_voidSendNumber(G_u8Positioner);
-//    							_delay_ms(1000);
-//    							LCD_voidSetLocation(LCD_U8_LINE1,0);
-//    							LCD_voidSendString("Welcome, Sir.");
     							APP_voidAppUnlocked();
     						}
     						else	/*The Password is Enterred Wrong*/
@@ -132,11 +83,6 @@ int main ()
     					}
     					else if (G_u8HKPReturn >= 0 && G_u8HKPReturn <= 9) //Taking Numbers for password
     					{
-//    						LCD_voidSetLocation(LCD_U8_LINE2, G_u8LCDCursor);
-//    						LCD_voidSendChar(48 + G_u8HKPReturn);
-//    						G_u16PasswordSave = (G_u16PasswordSave*10) + G_u8HKPReturn;
-//    						G_u8LCDCursor ++;
-//
     						APP_voidTakePassword();
 
     					}
@@ -164,6 +110,17 @@ int main ()
 								LCD_voidSendString("Stop");
 							}
     					}
+    					else if ( G_u8HKPReturn == '-')
+    					{
+    						LCD_voidSendCommand(LCD_CLEAR);
+    						LCD_voidSetLocation(LCD_U8_LINE1,0);
+    						LCD_voidSendString("Temp: ");
+    						LCD_voidSendNumber(G_u8Temperature);
+
+    						LCD_voidSetLocation(LCD_U8_LINE2,0);
+    						LCD_voidSendString("Light: ");
+    						LCD_voidSendNumber(G_u16Intensity);
+    					}
     				}
     			}
     			G_u8HKPReturn = HKP_KEY_NOT_PRESSED ;
@@ -171,3 +128,5 @@ int main ()
     	}
     	return 0;
     }
+
+
