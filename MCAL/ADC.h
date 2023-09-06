@@ -4,7 +4,7 @@
 #define 	ADC_REG		*(( volatile u16*)0x24)	/*Address to two bytes "LOW & HIGH"*/
 
 #define ADC_MAXIMUM_VALUE    1023 /*depends on the ADC resolution if 10 bit 1023*/
-#define ADC_REF_VOLT_VALUE   5
+#define ADC_REF_VOLT_VALUE   2.56
 
 
 
