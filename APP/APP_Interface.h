@@ -12,11 +12,13 @@
 
 #define LOCKED 		0
 #define UNLOCKED	1
-#define MOTOR		2
-#define HOME		3
+#define PASSWORD	2
+#define MOTOR_STATE	3
 
-
-
+#define MOTOR_CW		3
+#define MOTOR_CCW		4
+#define MOTOR_STOP		5
+#define MOTOR_ERROR		6
 
 
 
@@ -24,7 +26,7 @@
 #include "../LIB/STD_TYPES.h"
 #include "../LIB/BIT_MATH.h"
 #include <avr/io.h>
-#include <avr/delay.h>
+#include <util/delay.h>
 #include <avr/interrupt.h>
 
 //MCAL
@@ -33,13 +35,17 @@
 #include "../HAL/KEYPAD/HKP_Interface.h"
 #include "../HAL/LCD/LCD_Interface.h"
 #include "../HAL/SERVO/SERVOMOTOR_Interface.h"
+#include "../HAL/DC_MOTOR/DCMOTOR_Interface.h"
 
 void APP_voidAppInit();
 
 void APP_voidAppLocked(void);
 
+void APP_voidAppUnlocked(void);
+
 void APP_voidTakePassword(void);
 
+void APP_ControlMotor(void);
 
 
 #endif /* APP_APP_INTERFACE_H_ */

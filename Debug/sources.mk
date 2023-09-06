@@ -26,5 +26,6 @@ HAL/KEYPAD \
 HAL/LCD \
 HAL/SERVO \
 MCAL/DIO \
+MCAL/M_TMR \
 . \
 
