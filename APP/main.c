@@ -11,11 +11,13 @@ int main(void){
 	LCD_voidInit();
 
 //	that code for tempterure sensor.
-
+while(1)
+{
 	u8 temp_value=LM35_TempSensor_u8ReadTemp();
 	LCD_voidSetLocation(LCD_U8_LINE1,0);
 	LCD_voidSendNumber(temp_value);
-	_delay_ms(300);
+	_delay_ms(20);
+
 
 //	LCD_voidSendCommand(0b00000001);
 
@@ -24,7 +26,8 @@ int main(void){
 	u16 LDR_value= LDR_readint();
 	LCD_voidSetLocation(LCD_U8_LINE2,0);
 	LCD_voidSendNumber(LDR_value);
-
+	_delay_ms(20);
+}
 	return 0;
 }
 
