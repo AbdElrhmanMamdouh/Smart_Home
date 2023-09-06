@@ -41,13 +41,12 @@ u8 LM35_TempSensor_u8ReadTemp(void)
 
  *	   " * ADC_REF_VOLT_VALUE"  This operation converts the scaled ADC reading into a voltage value.
 
- *	   "ADC_MAXIMUM_VALUE * SENSOR_MAX_VOLT_VALUE"   This step scales the voltage value down to a fractional value between 0 and 1, representing the relative position within the full range.
+ *	   " / ADC_MAXIMUM_VALUE * SENSOR_MAX_VOLT_VALUE"   This step scales the voltage value down to a fractional value between 0 and 1, representing the relative position within the full range.
 
  *      the entire result is cast back to u8, which truncates the fractional part of the value and keeps only the integer part.
  */
 	temp_value = (u8)(((u32) adc_value * SENSOR_MAX_TEMPERATURE * ADC_REF_VOLT_VALUE) / (ADC_MAXIMUM_VALUE * SENSOR_MAX_VOLT_VALUE));
 //	temp_value = adc_value * 0.25;
+
 	return temp_value;
 }
-
-
