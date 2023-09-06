@@ -19,7 +19,6 @@ while(1)
 	_delay_ms(20);
 
 
-//	LCD_voidSendCommand(0b00000001);
 
 	//	that code for LDR sensor.
 
@@ -27,7 +26,7 @@ while(1)
 	LCD_voidSetLocation(LCD_U8_LINE2,0);
 	LCD_voidSendNumber(LDR_value);
 	_delay_ms(20);
+	LCD_voidSendCommand(0b00000001);
 }
 	return 0;
 }
-
