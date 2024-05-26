@@ -1,6 +1,6 @@
 # Smart Home Project
 
-Welcome to the Smart Home Project repository! This project is designed to create an intelligent home automation system using IoT (Internet of Things) technologies. The system allows users to control and monitor various aspects of their home environment, such as lighting, temperature, and security, through a web-based interface. This project is implemented as a Proteus simulation, so no physical hardware is required.
+Welcome to the Smart Home Project repository! This project is designed to create an intelligent home automation system. The system allows users to control and monitor various aspects of their home environment, such as lighting, temperature, and security. This project is implemented as a Proteus simulation, so no physical hardware is required.
 
 ## Table of Contents
 
